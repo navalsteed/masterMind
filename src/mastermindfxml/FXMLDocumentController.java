@@ -27,12 +27,6 @@ import javafx.scene.shape.Circle;
 
 import derbyDB.*;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -142,7 +136,7 @@ public class FXMLDocumentController implements Initializable {
             }
         }
         if (blackNum == 4) {
-            end = LocalTime.now();     //finishing recording time;
+            end = System.currentTimeMillis();     //finishing recording time;
             isWinning = true;
         }
         guessResults.addAll(guessResultsWhite);
@@ -186,15 +180,18 @@ public class FXMLDocumentController implements Initializable {
                 dialog.setHeaderText("      \\(^_^)/");
                 dialog.setContentText("Good Job!\nYou took " + count / 4 + " times!\nPlease enter your name:");
 
-// Traditional way to get the response value.
                 Optional<String> result = dialog.showAndWait();
-                LocalTime timeElapsed = end.minus(start + 3600000, ChronoUnit.MILLIS);
 
-
-                if (result.isPresent()) {
+                long timeInterval = end - start;
+                long second = (timeInterval / 1000) % 60;
+                long minute = (timeInterval / (1000 * 60)) % 60;
+                long hour = (timeInterval / (1000 * 60 * 60)) % 24;
+                String timeSpent = String.format("%02d:%02d:%02d", hour, minute, second);
+                System.out.println("sql time spent is " + java.sql.Time.valueOf(timeSpent));
+                if (result.isPresent() && (timeInterval < 86400000)) {  //only show result that can be represented as HH:mm:ss
                     System.out.println("Your name: " + result.get());
                     try {
-                        dbConnectorSingleton.getInstance().insert(result.get(), timeElapsed.toString(), code.substringCodelist());
+                        dbConnectorSingleton.getInstance().insert(result.get(), timeSpent, code.substringCodelist());
                     } catch (SQLException ex) {
                         Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -281,7 +278,8 @@ public class FXMLDocumentController implements Initializable {
     }
 
     long start;
-    LocalTime end;
+
+    long end;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
