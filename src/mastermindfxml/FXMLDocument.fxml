@@ -377,17 +377,14 @@
                                 <Button fx:id="blueButton" ellipsisString="" layoutX="138.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleButtonAction" style="-fx-background-radius: 24; -fx-max-height: 24; -fx-max-width: 24; -fx-min-height: 24; -fx-min-width: 24; -fx-background-color: dodgerblue;" text="Button" />
                                 <Button fx:id="purpleButton" ellipsisString="" layoutX="173.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleButtonAction" style="-fx-background-radius: 24; -fx-max-height: 24; -fx-max-width: 24; -fx-min-height: 24; -fx-min-width: 24; -fx-background-color: #ff00ff;" text="Button" />
                                 <Button fx:id="greenButton" ellipsisString="" layoutX="102.0" layoutY="16.0" mnemonicParsing="false" onAction="#handleButtonAction" style="-fx-background-radius: 24; -fx-max-height: 24; -fx-max-width: 24; -fx-min-height: 24; -fx-min-width: 24; -fx-background-color: #008000;" text="Button" />
-                                <Button fx:id="checkButton" ellipsisString="" layoutX="27.0" layoutY="69.0" mnemonicParsing="false" onAction="#validate" text="Check" />
+                                <Button fx:id="checkButton" ellipsisString="" layoutX="239.0" layoutY="16.0" mnemonicParsing="false" onAction="#validate" text="Check" />
                         <TextArea fx:id="textArea" layoutX="-4.0" layoutY="172.0" prefHeight="200.0" prefWidth="334.0" style="-fx-background-color: #f0f0f0">
                            <font>
                               <Font name="System Italic" size="15.0" />
                            </font>
                         </TextArea>
-                        <CheckBox fx:id="checkBoxRule" layoutX="151.0" layoutY="64.0" mnemonicParsing="false" onAction="#displayText" prefHeight="25.0" prefWidth="95.0" text="How to play">
-                           <font>
-                              <Font name="System Bold Italic" size="12.0" />
-                           </font>
-                        </CheckBox>
+                        <RadioButton fx:id="radioBoxRule" layoutX="91.0" layoutY="122.0" mnemonicParsing="false" onAction="#displayText" text="How to play" />
+                        <RadioButton fx:id="radioBoxDB" layoutX="204.0" layoutY="122.0" mnemonicParsing="false" onAction="#showDB" text="Best Results" />
                             </children>
                         </AnchorPane>
                     </items>

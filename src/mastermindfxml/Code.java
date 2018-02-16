@@ -41,9 +41,6 @@ public class Code {
         Collections.shuffle(codeList);
         codeList.remove(0);
         codeList.remove(0);
-        for (int i = 0; i < codeList.size(); i++) {
-            System.out.println(codeList.get(i));
-        }
         System.out.println("code list generated:" + codeList);
         return codeList;
     }
