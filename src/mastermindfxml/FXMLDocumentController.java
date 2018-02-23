@@ -83,7 +83,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     Circle ansCircle3;
 
-    private int count = 0;  //keep track of how many valid click user has made
+    private int count = -1;  //keep track of how many valid click user has made
     private Circle circle = null;
     private Map<String, Color> map;
     private GridPane[] validateGridpanes;
@@ -100,15 +100,15 @@ public class FXMLDocumentController implements Initializable {
      */
     @FXML
     private void handleButtonAction(ActionEvent event) {
-        if (count == 1) {
+        if (count == -1) {
             start = System.currentTimeMillis();  // start recording time
+            count++;
         }
         if (onCheck) {
             Button btn = (Button) event.getSource();
             String id = btn.getId();
-
             if (!guess.getGuess().contains(id)) {
-                viewGridpane.add(addCircle(map.get(id)), count % 4, count / 4); //place the circle on gridpane
+                viewGridpane.add(addCircle(map.get(id)), count%40%4, count%40/4); //place the circle on gridpane
                 guess.setGuess(id);
                 count++;
             }
@@ -137,7 +137,7 @@ public class FXMLDocumentController implements Initializable {
      Compare color and position between user's input and answer
      Return result as number of White and/or black pattern
      */
-    private List validateResults() {
+    private List verifyResults() {
         int blackNum = 0;
         List<Color> guessResults = new ArrayList();
         List<Color> guessResultsWhite = new ArrayList();
@@ -164,14 +164,17 @@ public class FXMLDocumentController implements Initializable {
         return guessResults;
     }
 
+    
+    /**
+     * display the rsults on th screen 
+     */   
     @FXML
     private void validate(ActionEvent event) {
         if (guess.getGuess().size() == 4) {
             checkButton.setDisable(true);
             onCheck = true;
-            List<Color> guessList = validateResults();
-
-            for (Node node : validateGridpanes[count / 4 - 1].getChildren()) {
+            List<Color> guessList = verifyResults();
+            for (Node node : validateGridpanes[(count/4 - 1)%10].getChildren()) {
                 if (node instanceof Circle) {
                     if (GridPane.getRowIndex(node) == 0 && GridPane.getColumnIndex(node) == 0) {
                         ((Circle) node).setFill(guessList.get(0));
@@ -197,7 +200,6 @@ public class FXMLDocumentController implements Initializable {
                 dialog.setTitle("Winning Message");
                 dialog.setHeaderText("      \\(^_^)/");
                 dialog.setContentText("Good Job!\nYou took " + count / 4 + " times!\nPlease enter your name:");
-
                 Optional<String> result = dialog.showAndWait();
                 long timeInterval = end - start;
                 long second = (timeInterval / 1000) % 60;
@@ -206,7 +208,7 @@ public class FXMLDocumentController implements Initializable {
                 String timeSpent = String.format("%02d:%02d:%02d", hour, minute, second);
                 String name = "default";
                 if (result.isPresent() && (timeInterval < 86400000)) {  //only show result that can be represented as HH:mm:ss
-                    if (result.get().length() <= 25) {
+                    if (result.get().length() <= 25) {//replace namer longer than 25 characters with "default"
                         name = result.get();
                     }
                     try {
@@ -216,14 +218,10 @@ public class FXMLDocumentController implements Initializable {
                     }
                 }
                 reset();// reset code and play again
+                code.setCodeList(code.generateCode());
             }
 
-            if (count == 40 && !isWinning) {
-                Alert alert = new Alert(AlertType.INFORMATION);
-                alert.setTitle("Losing Message");
-                alert.setHeaderText("       (>_<)");
-                alert.setContentText("Game Over");
-                alert.showAndWait();
+            if (count%40==0 && !isWinning) {   //another cycle starts here
                 reset();// reset code and play again
             }
         }
@@ -238,9 +236,7 @@ public class FXMLDocumentController implements Initializable {
         radioBoxDB.setSelected(false);
         checkButton.setDisable(true);
         isWinning = false;
-        count = 0;
         viewGridpane.getChildren().clear();
-        code.setCodeList(code.generateCode());
         clearVGP();
         ansCircle0.setFill(Color.GRAY);
         ansCircle1.setFill(Color.GRAY);
@@ -293,7 +289,6 @@ public class FXMLDocumentController implements Initializable {
         } else {
             gridpaneDB.setDisable(false);
             gridpaneDB.setVisible(true);
-            //  gridpaneDB.setGridLinesVisible(true);
             radioBoxRule.setSelected(false);
             textArea.setDisable(true);
             textArea.setVisible(false);
@@ -344,7 +339,6 @@ public class FXMLDocumentController implements Initializable {
         textArea.setEditable(false);
         gridpaneDB.setDisable(true);
         gridpaneDB.setVisible(false);
-        setRuleText();
     }
 
     /*
@@ -355,8 +349,8 @@ public class FXMLDocumentController implements Initializable {
                 + "• White indicates correct color wrong position\n"
                 + "• Black indicates correct color & position\n"
                 + "• Tap check button to verify result\n"
-                + "• Each peg only appear once\n"
-                + "• Ten chances in total");
+                + "• Each peg should only appear once\n"
+                + "• Guess as many times as you want ");
     }
 
 }
